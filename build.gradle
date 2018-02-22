@@ -1,0 +1,33 @@
+plugins {
+  id 'java'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+  jcenter()
+}
+
+tasks.withType(Wrapper) {
+  gradleVersion = '4.6-rc-2'
+}
+
+dependencies {
+  final junitJupiterVersion = '5.1.0'
+  testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+
+  final log4jVersion = '2.10.0'
+  testRuntimeOnly("org.apache.logging.log4j:log4j-core:$log4jVersion")
+  testRuntimeOnly("org.apache.logging.log4j:log4j-jul:$log4jVersion")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+}
+
+(tasks.getByName('test') as Test).configure {
+  systemProperty('java.util.logging.manager', 'org.apache.logging.log4j.jul.LogManager')
+  systemProperty('junit.jupiter.extensions.autodetection.enabled', 'true')
+  useJUnitPlatform()
+  testLogging {
+    events("passed", "skipped", "failed")
+  }
+}
